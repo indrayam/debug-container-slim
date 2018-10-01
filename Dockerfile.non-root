@@ -1,0 +1,22 @@
+#Download base image alpine
+FROM alpine:3.8
+
+# Update Software repository
+RUN apk update && apk upgrade && apk add --no-cache git openssh-client curl less openssl tree less bash bash-completion ca-certificates jq coreutils binutils findutils grep vim \
+    && addgroup -g 1000 anand \
+    && adduser -u 1000 -G anand -s /bin/bash -D anand
+
+# Set the WORKDIR to /home/anand
+USER anand:anand
+WORkDIR /home/anand
+
+# Download and Install k8s specific tools
+COPY --chown=anand:anand slim/fzf .fzf
+COPY --chown=anand:anand slim/.bash_profile .
+COPY --chown=anand:anand slim/.bashrc-user .bashrc
+COPY --chown=anand:anand slim/.om .
+COPY --chown=anand:anand slim/complete-setup.sh .
+
+RUN set -x && \
+    chmod +x ~/complete-setup.sh
+
